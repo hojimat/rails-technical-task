@@ -10,7 +10,8 @@ class PostsController < ApplicationController
   def create
     @post = Post.new(post_params)
     if @post.save
-        redirect_to "/posts", notice: "Post was successfully created"
+      PostsMailer.with(post: @post).confirm().deliver_later()
+      redirect_to "/posts", notice: "Post was successfully created"
     else
       render :new
     end
