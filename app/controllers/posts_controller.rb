@@ -10,7 +10,13 @@ class PostsController < ApplicationController
   def create
     @post = Post.new(post_params)
     if @post.save
+      # send an email
       PostsMailer.with(post: @post).confirm().deliver_later()
+
+      # create a history record
+      History.create(typeof: "postcreation", user: "#{User.first()}")
+
+      # go back
       redirect_to "/posts", notice: "Post was successfully created"
     else
       render :new
